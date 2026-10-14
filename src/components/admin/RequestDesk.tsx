@@ -20,7 +20,7 @@ export function RequestDesk({
 }) {
   const [state, formAction] = useActionState(updateServiceRequest, null);
   return (
-    <form action={formAction} className="form-grid card">
+    <form action={formAction} className="form-grid card admin-editor">
       <h2>Staff update</h2>
       <input type="hidden" name="requestId" value={requestId} />
       <label className="field">

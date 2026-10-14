@@ -23,7 +23,7 @@ export function ProgramForm({
 }) {
   const [state, action] = useActionState(saveProgram, null);
   return (
-    <form action={action} className="form-grid card">
+    <form action={action} className="form-grid card admin-editor">
       <h2>{program ? "Edit programme" : "New programme"}</h2>
       {program && <input type="hidden" name="id" value={program.id} />}
       <label className="field"><span>Title</span><input name="title" required defaultValue={program?.title} /></label>
@@ -69,7 +69,7 @@ export function InsightForm({
 }) {
   const [state, action] = useActionState(saveInsight, null);
   return (
-    <form action={action} className="form-grid card">
+    <form action={action} className="form-grid card admin-editor">
       <h2>{article ? "Edit article" : "New article"}</h2>
       {article && <input type="hidden" name="id" value={article.id} />}
       <label className="field"><span>Title</span><input name="title" required defaultValue={article?.title} /></label>

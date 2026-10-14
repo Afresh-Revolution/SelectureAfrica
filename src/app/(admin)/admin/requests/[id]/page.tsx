@@ -49,7 +49,7 @@ export default async function AdminRequestDetail({ params }: { params: Promise<{
   `;
 
   return (
-    <div className="split-page">
+    <div className="admin-desk">
       <div>
         <p className="eyebrow">{request.referenceCode}</p>
         <h1 style={{ fontSize: "2.4rem" }}>{request.title}</h1>

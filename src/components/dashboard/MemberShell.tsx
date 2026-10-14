@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signOut } from "@/features/auth/actions";
 import type { SessionUser } from "@/types";
 
@@ -17,15 +20,19 @@ const professionalNav = [
   { href: "/dashboard/preferences", label: "Preferences" },
 ];
 
+function isCurrent(pathname: string, href: string) {
+  if (href === "/dashboard") return pathname === "/dashboard";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function MemberShell({
   user,
-  pathname,
   children,
 }: {
   user: SessionUser;
-  pathname: string;
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const links = user.accountType === "corporate" ? corporateNav : professionalNav;
   return (
     <div className="member-shell">
@@ -45,7 +52,7 @@ export function MemberShell({
         </header>
         <nav className="member-nav" aria-label="Account">
           {links.map((link) => {
-            const current = link.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(link.href);
+            const current = isCurrent(pathname, link.href);
             return (
               <Link key={link.href} href={link.href} aria-current={current ? "page" : undefined}>
                 {link.label}

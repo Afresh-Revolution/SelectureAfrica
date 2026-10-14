@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signOut } from "@/features/auth/actions";
 import type { SessionUser } from "@/types";
 
@@ -15,15 +18,19 @@ const links = [
   { href: "/admin/audit", label: "Audit log" },
 ];
 
+function isCurrent(pathname: string, href: string) {
+  if (href === "/admin") return pathname === "/admin";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function AdminShell({
   user,
-  pathname,
   children,
 }: {
   user: SessionUser;
-  pathname: string;
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const items = user.accountType === "super_admin" ? [...links, { href: "/admin/team", label: "Administrators" }] : links;
   return (
     <div className="admin-frame">
@@ -33,7 +40,7 @@ export function AdminShell({
         </Link>
         <nav aria-label="Administration">
           {items.map((item) => {
-            const current = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
+            const current = isCurrent(pathname, item.href);
             return (
               <Link key={item.href} href={item.href} aria-current={current ? "page" : undefined}>
                 {item.label}

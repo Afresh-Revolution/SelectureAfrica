@@ -21,25 +21,29 @@ export default async function ProgramsAdmin({ searchParams }: { searchParams: Pr
   >`select id, title, slug, summary, description, duration, format, audience, status, starts_on, sort_order from programs order by sort_order, title`;
   const current = programs.find((program) => program.id === edit);
   return (
-    <div className="split-page">
-      <div>
-        <h1 style={{ fontSize: "2.4rem", marginBottom: "1rem" }}>Programmes</h1>
-        <div className="table-wrap">
-          <table className="data">
-            <thead><tr><th>Title</th><th>Status</th><th></th></tr></thead>
-            <tbody>
-              {programs.map((program) => (
-                <tr key={program.id}>
-                  <td>{program.title}</td>
-                  <td>{program.status}</td>
-                  <td><Link href={`/admin/programs?edit=${program.id}`}>Edit</Link></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+    <div>
+      <div className="admin-heading">
+        <h1>Programmes</h1>
       </div>
-      <ProgramForm key={current?.id ?? "new"} program={current} />
+      <div className="admin-desk">
+        <div className="admin-list">
+          <div className="table-wrap">
+            <table className="data">
+              <thead><tr><th>Title</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                {programs.map((program) => (
+                  <tr key={program.id}>
+                    <td>{program.title}</td>
+                    <td>{program.status}</td>
+                    <td><Link href={`/admin/programs?edit=${program.id}`}>Edit</Link></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <ProgramForm key={current?.id ?? "new"} program={current} />
+      </div>
     </div>
   );
 }

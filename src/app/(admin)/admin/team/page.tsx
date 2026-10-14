@@ -14,26 +14,30 @@ export default async function TeamPage() {
     order by created_at
   `;
   return (
-    <div className="split-page">
-      <div>
-        <h1 style={{ fontSize: "2.4rem", marginBottom: "1rem" }}>Administrators</h1>
-        <div className="table-wrap">
-          <table className="data">
-            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Since</th></tr></thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.id}>
-                  <td>{row.fullName}{row.suspendedAt ? " (suspended)" : ""}</td>
-                  <td>{row.email}</td>
-                  <td>{row.accountType === "super_admin" ? "Super administrator" : "Administrator"}</td>
-                  <td>{formatDate(row.createdAt)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+    <div>
+      <div className="admin-heading">
+        <h1>Administrators</h1>
       </div>
-      <StaffForm />
+      <div className="admin-desk">
+        <div className="admin-list">
+          <div className="table-wrap">
+            <table className="data">
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Since</th></tr></thead>
+              <tbody>
+                {rows.map((row) => (
+                  <tr key={row.id}>
+                    <td>{row.fullName}{row.suspendedAt ? " (suspended)" : ""}</td>
+                    <td>{row.email}</td>
+                    <td>{row.accountType === "super_admin" ? "Super administrator" : "Administrator"}</td>
+                    <td>{formatDate(row.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <StaffForm />
+      </div>
     </div>
   );
 }
