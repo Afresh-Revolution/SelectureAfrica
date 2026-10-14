@@ -13,8 +13,12 @@ function loadEnv() {
     if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
     const index = trimmed.indexOf("=");
     const key = trimmed.slice(0, index).trim();
-    const value = trimmed.slice(index + 1).trim();
-    if (!process.env[key]) process.env[key] = value;
+    let value = trimmed.slice(index + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    const fromFile = key === "ADMIN_EMAIL" || key === "ADMIN_PASSWORD";
+    if (fromFile || !process.env[key]) process.env[key] = value;
   }
 }
 
@@ -29,19 +33,40 @@ if (!password || password.length < 10) {
 
 const passwordHash = await bcrypt.hash(password, 12);
 const existing = await sql`select id from profiles where email = ${email}`;
-if (!existing.length) {
-  const created = await sql`
-    insert into profiles (email, password_hash, full_name, account_type, email_verified_at)
-    values (${email}, ${passwordHash}, 'Selecture Administrator', 'super_admin', now())
-    returning id
-  `;
+if (existing.length) {
   await sql`
-    insert into notification_preferences (profile_id, newsletter, product_updates, request_alerts)
-    values (${created[0].id}, false, true, true)
+    update profiles
+    set password_hash = ${passwordHash},
+        account_type = 'super_admin',
+        email_verified_at = coalesce(email_verified_at, now()),
+        suspended_at = null
+    where id = ${existing[0].id}
   `;
-  console.log("super admin created");
+  console.log("super admin updated from .env");
 } else {
-  console.log("super admin already exists");
+  const supers = await sql`
+    select id from profiles where account_type = 'super_admin' order by created_at asc
+  `;
+  if (supers.length === 1) {
+    await sql`
+      update profiles
+      set email = ${email}, password_hash = ${passwordHash}, suspended_at = null
+      where id = ${supers[0].id}
+    `;
+    console.log("super admin login updated from .env");
+  } else {
+    const created = await sql`
+      insert into profiles (email, password_hash, full_name, account_type, email_verified_at)
+      values (${email}, ${passwordHash}, 'Selecture Administrator', 'super_admin', now())
+      returning id
+    `;
+    await sql`
+      insert into notification_preferences (profile_id, newsletter, product_updates, request_alerts)
+      values (${created[0].id}, false, true, true)
+      on conflict (profile_id) do nothing
+    `;
+    console.log("super admin created");
+  }
 }
 
 const programs = [
