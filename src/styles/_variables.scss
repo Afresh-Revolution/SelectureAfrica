@@ -1,0 +1,37 @@
+$navy: #19263d;
+$navy-deep: #10192b;
+$burgundy: #782f47;
+$burgundy-deep: #5c2235;
+$gold: #b79660;
+$gold-soft: #d7c4a3;
+$ivory: #f7f5f0;
+$ivory-deep: #efeae2;
+$paper: #fffcf8;
+$forest: #243b35;
+$ink: #1c2430;
+$muted: #5c6572;
+$line: rgba(25, 38, 61, 0.12);
+$danger: #8d2f2f;
+$shadow: 0 18px 50px rgba(25, 38, 61, 0.08);
+
+$sans: var(--font-sans), "Plus Jakarta Sans", "Segoe UI", sans-serif;
+$serif: var(--font-serif), "DM Serif Display", Georgia, serif;
+
+$space: (
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.5rem,
+  6: 2rem,
+  7: 3rem,
+  8: 4.5rem,
+  9: 7rem,
+);
+
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+@mixin focus-ring {
+  outline: 2px solid $gold;
+  outline-offset: 3px;
+}

@@ -1,0 +1,181 @@
+@use "variables" as *;
+
+.auth-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+
+.auth-story {
+  background:
+    radial-gradient(500px 240px at 20% 10%, rgba(183, 150, 96, 0.25), transparent 60%),
+    $navy;
+  color: $ivory;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.auth-story a { color: $gold-soft; text-decoration: none; }
+
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: white;
+}
+
+.auth-brand img {
+  width: 2.5rem;
+  height: auto;
+  display: block;
+}
+.auth-story h1 { font-size: clamp(2.2rem, 4vw, 4rem); margin: 1rem 0; }
+.auth-story p { color: #d5dbe6; max-width: 34rem; }
+
+.auth-panel {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  padding: 2.5rem clamp(1.25rem, 6vw, 4.5rem);
+}
+
+.admin-frame {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
+  background: #f3f0ea;
+}
+
+.admin-side {
+  background: $navy-deep;
+  color: #e6e1d8;
+  padding: 1.4rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  min-width: 0;
+}
+
+.admin-brand {
+  color: white;
+  text-decoration: none;
+  font-family: $serif;
+  font-size: 1.6rem;
+  padding: 0 0.5rem;
+}
+
+.admin-side nav {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.admin-side a {
+  color: #d9dee6;
+  text-decoration: none;
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.95rem;
+}
+
+.admin-side a[aria-current="page"] {
+  background: rgba(183, 150, 96, 0.18);
+  color: white;
+}
+
+.admin-main {
+  padding: 1.6rem 1.6rem 3rem;
+  min-width: 0;
+}
+
+.admin-top,
+.member-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-top { margin-bottom: 1.4rem; }
+
+.member-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: linear-gradient(180deg, #f3efe8 0, $ivory 220px);
+}
+
+.member-top { padding: 1.1rem 0; }
+
+.member-brand {
+  text-decoration: none;
+  color: $navy;
+  font-weight: 720;
+  letter-spacing: -0.03em;
+}
+
+.member-user {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.member-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-bottom: 1rem;
+}
+
+.member-nav a {
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+  color: $navy;
+}
+
+.member-nav a[aria-current="page"] {
+  background: $navy;
+  color: $ivory;
+}
+
+.member-main { padding-bottom: 4rem; }
+
+@media (max-width: 900px) {
+  .auth-shell,
+  .admin-frame { grid-template-columns: minmax(0, 1fr); }
+
+  .auth-story { min-height: auto; padding: 1.5rem 1.15rem; }
+  .auth-panel { padding: 1.5rem 1.15rem 3rem; align-content: start; }
+
+  .admin-side {
+    position: relative;
+    height: auto;
+    padding: 1rem 1rem 0.8rem;
+  }
+
+  .admin-side nav {
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+  }
+
+  .admin-side a { white-space: nowrap; }
+
+  .admin-main { padding: 1.15rem 1rem 2.5rem; }
+}
+
+@media (max-width: 700px) {
+  .member-top { align-items: flex-start; }
+}

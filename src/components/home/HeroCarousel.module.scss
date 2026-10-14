@@ -1,0 +1,74 @@
+@use "../../styles/variables" as *;
+
+.stage {
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.frame {
+  position: relative;
+  width: min(100%, 420px);
+  min-width: 0;
+  aspect-ratio: 242 / 265;
+  height: auto;
+  margin-inline: auto;
+  justify-self: center;
+  overflow: hidden;
+  background: transparent;
+  filter: drop-shadow(0 18px 28px rgba(16, 25, 43, 0.28));
+  mask-image: url("/brand/africa-mask.png");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: 100% 100%;
+  mask-mode: alpha;
+  -webkit-mask-image: url("/brand/africa-mask.png");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: 100% 100%;
+}
+
+.slide {
+  object-fit: cover;
+  object-position: center 46%;
+  opacity: 0;
+  transition: opacity 0.8s $ease;
+}
+
+.active {
+  opacity: 1;
+}
+
+.dots {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.dot,
+.dotOn {
+  width: 1.7rem;
+  height: 3px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0;
+  background: rgba(247, 245, 240, 0.35);
+}
+
+.dotOn {
+  background: #f7f5f0;
+}
+
+@media (max-width: 900px) {
+  .frame {
+    width: min(78%, 280px);
+    min-height: 0;
+    height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide {
+    transition: none;
+  }
+}

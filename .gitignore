@@ -1,0 +1,16 @@
+node_modules
+package-lock.json
+.next
+out
+dist
+.vercel
+*.log
+.env
+.env*.local
+admin-access.local.txt
+.verify
+_brief.txt
+_roadmap.txt
+.DS_Store
+tsconfig.tsbuildinfo
+next-env.d.ts

@@ -1,0 +1,93 @@
+@use "../../styles/variables" as *;
+
+.footer {
+  background: $navy-deep;
+  color: #e7e2d8;
+  padding: 4rem 0 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 2rem;
+}
+
+.lockup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.mark {
+  width: 3rem;
+  height: auto;
+  display: block;
+}
+
+.brand {
+  font-family: $serif;
+  font-size: 2rem;
+  color: white;
+}
+
+.muted { color: #b7c0cc; }
+
+.col {
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+}
+
+.col a { color: #f4efe6; text-decoration: none; }
+.col a:hover { color: $gold-soft; }
+.label,
+.col h2 {
+  color: $gold;
+  font-family: $sans;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 0.4rem;
+}
+
+.base {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #9aa6b5;
+  font-size: 0.88rem;
+}
+
+.form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.form input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  padding: 0.7rem 0.9rem;
+}
+
+.note { min-height: 1.2rem; font-size: 0.85rem; color: $gold-soft; }
+
+@media (max-width: 1000px) {
+  .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .grid,
+  .base,
+  .form { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .footer { padding: 3rem 0 1.25rem; }
+}

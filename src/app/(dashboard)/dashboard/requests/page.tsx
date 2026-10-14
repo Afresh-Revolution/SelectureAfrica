@@ -1,0 +1,53 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { requireUser } from "@/lib/auth";
+import { REQUEST_LABELS, STATUS_LABELS } from "@/lib/constants";
+import { sql } from "@/lib/db";
+import { formatDate } from "@/lib/format";
+import type { ServiceRequestStatus, ServiceRequestType } from "@/types";
+
+export default async function RequestsPage() {
+  const user = await requireUser();
+  if (!user.organizationId) redirect("/dashboard");
+  const rows = await sql<
+    { id: string; referenceCode: string; title: string; requestType: ServiceRequestType; status: ServiceRequestStatus; createdAt: string }[]
+  >`
+    select id, reference_code, title, request_type, status, created_at
+    from service_requests
+    where organization_id = ${user.organizationId}
+    order by created_at desc
+  `;
+  return (
+    <div>
+      <div className="section-head">
+        <div>
+          <p className="eyebrow">Requests</p>
+          <h1 style={{ fontSize: "2.6rem" }}>Service instructions</h1>
+        </div>
+        <Link className="btn btn-primary" href="/dashboard/requests/new">New request</Link>
+      </div>
+      {rows.length === 0 ? (
+        <div className="empty">When you instruct a search or an outsourcing arrangement, it will be listed here.</div>
+      ) : (
+        <div className="table-wrap">
+          <table className="data">
+            <thead>
+              <tr><th>Reference</th><th>Title</th><th>Type</th><th>Status</th><th>Opened</th></tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <td><Link href={`/dashboard/requests/${row.id}`}>{row.referenceCode}</Link></td>
+                  <td>{row.title}</td>
+                  <td>{REQUEST_LABELS[row.requestType]}</td>
+                  <td><span className={`badge badge-${row.status}`}>{STATUS_LABELS[row.status]}</span></td>
+                  <td>{formatDate(row.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

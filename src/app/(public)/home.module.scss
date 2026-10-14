@@ -1,0 +1,275 @@
+@use "../../styles/variables" as *;
+
+.hero {
+  padding: 4.5rem 0 4.75rem;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.9fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: stretch;
+  position: relative;
+  z-index: 1;
+}
+
+.heroGrid > * { min-width: 0; }
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6.4vw, 6.1rem);
+  color: white;
+  max-width: 11ch;
+  margin: 0.8rem 0 1.1rem;
+}
+
+.hero .lede {
+  color: #d5dbe6;
+  font-size: 1.2rem;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+
+.briefWrap {
+  margin-top: 2.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1.4rem;
+  padding: 2rem 2rem 1.5rem;
+  backdrop-filter: blur(8px);
+}
+
+.panel strong {
+  display: block;
+  font-family: $serif;
+  font-size: 1.7rem;
+  font-weight: 400;
+  margin-bottom: 0.35rem;
+}
+
+.panel p { color: #c9d1dc; }
+
+.offices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.office {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgba(183, 150, 96, 0.45);
+}
+
+.office p,
+.office a {
+  margin: 0;
+}
+
+.office span {
+  display: block;
+  color: $gold-soft;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 1.35rem 0 0.25rem;
+}
+
+.chip {
+  grid-column: span 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.85rem;
+  border: 1px solid $line;
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+  color: $navy;
+  background: white;
+  font-size: 0.92rem;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.chip:nth-child(n + 5) {
+  grid-column: span 4;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.split h2, .block h2 {
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  margin: 0.6rem 0 1rem;
+}
+
+.steps {
+  display: grid;
+  gap: 0;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid $line;
+}
+
+.step b {
+  font-family: $serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: $burgundy;
+}
+
+.phase {
+  color: $gold;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.routes {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 1rem;
+}
+
+.route {
+  border-radius: 1.5rem;
+  padding: 2rem;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  transition: transform 0.45s $ease;
+}
+
+.route:hover { transform: translateY(-4px); }
+
+.primaryRoute {
+  background: $navy;
+  color: $ivory;
+}
+
+.secondaryRoute {
+  background: $paper;
+  border: 1px solid $line;
+  color: $navy;
+}
+
+.route h3 { font-size: clamp(2rem, 3vw, 2.8rem); }
+
+.index {
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $gold;
+}
+
+.article {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  min-height: 100%;
+}
+
+.article:hover h3 { color: $burgundy; }
+
+.band,
+.bandAlt,
+.bandWarm,
+.bandPaper {
+  padding: 6.25rem 0;
+}
+
+.bandAlt,
+.bandWarm,
+.bandPaper {
+  border-top: 1px solid rgba(25, 38, 61, 0.12);
+}
+
+.bandAlt {
+  background: #fffcf8;
+}
+
+.bandWarm {
+  background: #efeae2;
+}
+
+.bandPaper {
+  background: #fffcf8;
+}
+
+.band :global(.card),
+.bandAlt :global(.card),
+.bandWarm :global(.card),
+.bandPaper :global(.card) {
+  padding: 1.75rem 1.5rem 1.6rem;
+}
+
+.band :global(.section-head),
+.bandAlt :global(.section-head),
+.bandWarm :global(.section-head),
+.bandPaper :global(.section-head) {
+  margin-bottom: 2.75rem;
+}
+
+@media (max-width: 900px) {
+  .hero { padding: 2.75rem 0 3rem; }
+  .heroGrid, .split, .routes, .offices { grid-template-columns: minmax(0, 1fr); }
+  .band, .bandAlt, .bandWarm, .bandPaper { padding: 3.25rem 0; }
+  .briefWrap { margin-top: 2rem; }
+  .route { min-height: 0; padding: 1.5rem; }
+  .panel { padding: 1.4rem 1.15rem 1.2rem; }
+  .copy { padding-top: 0.5rem; }
+  .strip { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .chip,
+  .chip:nth-child(n + 5) { grid-column: span 2; }
+  .chip:last-child { grid-column: 3 / span 2; }
+}
+
+@media (max-width: 560px) {
+  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .chip,
+  .chip:nth-child(n + 5) { grid-column: span 1; }
+  .chip:last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, 16rem);
+  }
+}
