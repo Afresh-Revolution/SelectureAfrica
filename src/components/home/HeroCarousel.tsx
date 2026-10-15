@@ -10,8 +10,8 @@ const SLIDES = [
     alt: "African colleagues sharing ideas around a boardroom table",
   },
   {
-    src: "/hero/landing-09.jpg",
-    alt: "African professionals taking part in a business meeting",
+    src: "/hero/landing-13.jpg",
+    alt: "Black and white colleagues sharing ideas at work",
   },
   {
     src: "/hero/landing-03.jpg",

@@ -31,17 +31,17 @@ const PROGRAM_SHOTS = [
 ];
 
 const LANDING_PHOTOS = [
-  "/hero/landing-01.jpg",
   "/hero/landing-02.jpg",
   "/hero/landing-03.jpg",
-  "/hero/landing-04.jpg",
-  "/hero/landing-05.jpg",
   "/hero/landing-06.jpg",
   "/hero/landing-07.jpg",
   "/hero/landing-08.jpg",
   "/hero/landing-09.jpg",
   "/hero/landing-10.jpg",
   "/hero/landing-11.jpg",
+  "/hero/landing-12.jpg",
+  "/hero/landing-13.jpg",
+  "/hero/landing-15.jpg",
 ];
 
 function imageKey(src: string) {
@@ -145,8 +145,8 @@ export default async function HomePage() {
                 className={styles.clusterCircle}
                 shape="circle"
                 motion="floatLate"
-                src="/hero/landing-05.jpg"
-                alt="Business colleagues signing an agreement together"
+                src="/hero/landing-12.jpg"
+                alt="Black colleagues reviewing a project on a laptop"
               />
               <PhotoShape
                 className={styles.clusterBlob}
@@ -229,8 +229,8 @@ export default async function HomePage() {
             />
             <PhotoShape
               shape="squircle"
-              src="/hero/landing-04.jpg"
-              alt="Colleagues reviewing a document together"
+              src="/hero/landing-15.jpg"
+              alt="Black women colleagues working together around a table"
             />
             <PhotoShape
               shape="circle"
@@ -268,8 +268,8 @@ export default async function HomePage() {
           <PhotoShape
             shape="arch"
             motion="floatLate"
-            src="/hero/landing-01.jpg"
-            alt="Colleagues meeting in a modern office"
+            src="/hero/landing-09.jpg"
+            alt="Colleagues meeting around a table in a modern office"
           />
           <ol className={styles.steps}>
             {SEARCH_STEPS.map((step) => (
