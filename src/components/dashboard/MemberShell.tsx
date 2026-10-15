@@ -9,14 +9,25 @@ const corporateNav = [
   { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/organization", label: "Organisation" },
   { href: "/dashboard/requests", label: "Requests" },
+  { href: "/dashboard/jobs", label: "Roles" },
+  { href: "/dashboard/workforce", label: "Workforce" },
+  { href: "/dashboard/payroll", label: "Payroll" },
+  { href: "/dashboard/partners", label: "Partners" },
+  { href: "/dashboard/analytics", label: "Analytics" },
   { href: "/dashboard/submissions", label: "Programmes" },
+  { href: "/dashboard/membership", label: "Membership" },
   { href: "/dashboard/preferences", label: "Preferences" },
 ];
 
 const professionalNav = [
   { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/profile", label: "Profile" },
+  { href: "/dashboard/jobs", label: "Matches" },
+  { href: "/dashboard/applications", label: "Applications" },
+  { href: "/dashboard/learning", label: "Learning" },
+  { href: "/dashboard/assessments", label: "Assessment" },
   { href: "/dashboard/submissions", label: "Submissions" },
+  { href: "/dashboard/membership", label: "Membership" },
   { href: "/dashboard/preferences", label: "Preferences" },
 ];
 
@@ -33,7 +44,8 @@ export function MemberShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const links = user.accountType === "corporate" ? corporateNav : professionalNav;
+  const links =
+    user.accountType === "corporate" ? corporateNav : professionalNav;
   return (
     <div className="member-shell">
       <div className="container">
@@ -42,7 +54,14 @@ export function MemberShell({
             Selecture Africa
           </Link>
           <div className="member-user">
-            <span className="muted">{user.fullName}</span>
+            <div className="member-user-details">
+              <strong>{user.fullName}</strong>
+              <span>
+                {user.accountType === "corporate"
+                  ? "Organisation account"
+                  : "Professional account"}
+              </span>
+            </div>
             <form action={signOut}>
               <button className="btn btn-line" type="submit">
                 Sign out
@@ -54,7 +73,11 @@ export function MemberShell({
           {links.map((link) => {
             const current = isCurrent(pathname, link.href);
             return (
-              <Link key={link.href} href={link.href} aria-current={current ? "page" : undefined}>
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={current ? "page" : undefined}
+              >
                 {link.label}
               </Link>
             );

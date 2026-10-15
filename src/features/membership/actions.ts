@@ -21,9 +21,13 @@ import {
 } from "@/lib/validators";
 import type { ActionState } from "@/features/auth/actions";
 
-export async function updateOrganization(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function updateOrganization(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const user = await requireUser();
-  if (!user.organizationId || user.orgRole !== "owner") return { error: "Only the organisation owner can edit this profile." };
+  if (!user.organizationId || user.orgRole !== "owner")
+    return { error: "Only the organisation owner can edit this profile." };
   const parsed = organizationSchema.safeParse({
     name: formData.get("name"),
     industry: formData.get("industry"),
@@ -33,7 +37,8 @@ export async function updateOrganization(_prev: ActionState, formData: FormData)
     sizeBand: formData.get("sizeBand"),
     about: formData.get("about"),
   });
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the form." };
+  if (!parsed.success)
+    return { error: parsed.error.issues[0]?.message ?? "Check the form." };
 
   await sql`
     update organizations set
@@ -51,16 +56,21 @@ export async function updateOrganization(_prev: ActionState, formData: FormData)
   return { success: "Organisation profile saved." };
 }
 
-export async function addContact(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function addContact(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const user = await requireUser();
-  if (!user.organizationId) return { error: "Create an organisation profile first." };
+  if (!user.organizationId)
+    return { error: "Create an organisation profile first." };
   const parsed = contactSchema.safeParse({
     fullName: formData.get("fullName"),
     email: formData.get("email"),
     jobTitle: formData.get("jobTitle"),
     phone: formData.get("phone"),
   });
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the contact." };
+  if (!parsed.success)
+    return { error: parsed.error.issues[0]?.message ?? "Check the contact." };
 
   await sql`
     insert into organization_contacts (organization_id, full_name, email, phone, job_title)
@@ -87,10 +97,15 @@ export async function removeContact(formData: FormData) {
   revalidatePath("/dashboard/organization");
 }
 
-export async function createServiceRequest(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function createServiceRequest(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const user = await requireUser();
   if (user.accountType !== "corporate" || !user.organizationId) {
-    return { error: "Service requests are submitted from a corporate account." };
+    return {
+      error: "Service requests are submitted from a corporate account.",
+    };
   }
   const headcountRaw = String(formData.get("headcount") ?? "").trim();
   const parsed = serviceRequestSchema.safeParse({
@@ -101,11 +116,15 @@ export async function createServiceRequest(_prev: ActionState, formData: FormDat
     headcount: headcountRaw === "" ? undefined : headcountRaw,
     urgency: formData.get("urgency"),
   });
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the request." };
+  if (!parsed.success)
+    return { error: parsed.error.issues[0]?.message ?? "Check the request." };
 
   const code = referenceCode();
   const rawHeadcount = parsed.data.headcount;
-  const headcount = typeof rawHeadcount === "number" && Number.isFinite(rawHeadcount) ? rawHeadcount : null;
+  const headcount =
+    typeof rawHeadcount === "number" && Number.isFinite(rawHeadcount)
+      ? rawHeadcount
+      : null;
   const created = await sql<{ id: string }[]>`
     insert into service_requests (
       reference_code, organization_id, submitted_by, request_type, title, description, location, headcount, urgency
@@ -148,9 +167,96 @@ export async function createServiceRequest(_prev: ActionState, formData: FormDat
   redirect(`/dashboard/requests/${created[0].id}`);
 }
 
-export async function updateProfessionalProfile(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function updateServiceRequest(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const user = await requireUser();
-  if (user.accountType !== "professional") return { error: "This profile belongs to individual members." };
+  if (user.accountType !== "corporate" || !user.organizationId)
+    return { error: "Service requests belong to an organisation account." };
+  const requestId = String(formData.get("requestId") ?? "");
+  const headcountRaw = String(formData.get("headcount") ?? "").trim();
+  const parsed = serviceRequestSchema.safeParse({
+    requestType: formData.get("requestType"),
+    title: formData.get("title"),
+    description: formData.get("description"),
+    location: formData.get("location"),
+    headcount: headcountRaw === "" ? undefined : headcountRaw,
+    urgency: formData.get("urgency"),
+  });
+  if (!parsed.success)
+    return { error: parsed.error.issues[0]?.message ?? "Check the request." };
+
+  const rawHeadcount = parsed.data.headcount;
+  const headcount =
+    typeof rawHeadcount === "number" && Number.isFinite(rawHeadcount)
+      ? rawHeadcount
+      : null;
+  const updated = await sql<{ id: string }[]>`
+    update service_requests set
+      request_type = ${parsed.data.requestType},
+      title = ${parsed.data.title},
+      description = ${parsed.data.description},
+      location = ${emptyToNull(parsed.data.location)},
+      headcount = ${headcount},
+      urgency = ${parsed.data.urgency},
+      updated_at = now()
+    where id = ${requestId}
+      and organization_id = ${user.organizationId}
+      and submitted_by = ${user.id}
+    returning id
+  `;
+  if (!updated.length)
+    return { error: "You can only edit requests you submitted." };
+
+  await sql`
+    insert into request_updates (request_id, author_id, message, visible_to_client)
+    values (${requestId}, ${user.id}, 'The submitting organisation updated the request details.', true)
+  `;
+  await writeAudit({
+    actorId: user.id,
+    action: "request.updated",
+    entityType: "service_request",
+    entityId: requestId,
+  });
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/requests");
+  revalidatePath(`/dashboard/requests/${requestId}`);
+  redirect(`/dashboard/requests/${requestId}`);
+}
+
+export async function deleteServiceRequest(formData: FormData) {
+  const user = await requireUser();
+  if (user.accountType !== "corporate" || !user.organizationId)
+    redirect("/dashboard");
+  const requestId = String(formData.get("requestId") ?? "");
+  const deleted = await sql<{ id: string; referenceCode: string }[]>`
+    delete from service_requests
+    where id = ${requestId}
+      and organization_id = ${user.organizationId}
+      and submitted_by = ${user.id}
+    returning id, reference_code
+  `;
+  if (!deleted.length) redirect("/dashboard/requests");
+  await writeAudit({
+    actorId: user.id,
+    action: "request.deleted",
+    entityType: "service_request",
+    entityId: deleted[0].id,
+    metadata: { reference: deleted[0].referenceCode },
+  });
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/requests");
+  redirect("/dashboard/requests");
+}
+
+export async function updateProfessionalProfile(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const user = await requireUser();
+  if (user.accountType !== "professional")
+    return { error: "This profile belongs to individual members." };
   const yearsRaw = String(formData.get("experienceYears") ?? "").trim();
   const parsed = professionalProfileSchema.safeParse({
     headline: formData.get("headline"),
@@ -164,10 +270,12 @@ export async function updateProfessionalProfile(_prev: ActionState, formData: Fo
     linkedinUrl: formData.get("linkedinUrl"),
     visibility: formData.get("visibility") || "selecture_only",
   });
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the profile." };
+  if (!parsed.success)
+    return { error: parsed.error.issues[0]?.message ?? "Check the profile." };
 
   const rawYears = parsed.data.experienceYears;
-  const years = typeof rawYears === "number" && Number.isFinite(rawYears) ? rawYears : null;
+  const years =
+    typeof rawYears === "number" && Number.isFinite(rawYears) ? rawYears : null;
   await sql`
     insert into professional_profiles (
       profile_id, headline, summary, city, country, diaspora, skills, experience_years, industries, linkedin_url, visibility, updated_at
@@ -208,13 +316,20 @@ const CV_TYPES = new Set([
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ]);
 
-export async function uploadCv(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function uploadCv(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const user = await requireUser();
-  if (user.accountType !== "professional") return { error: "Only professional members can store a CV." };
+  if (user.accountType !== "professional")
+    return { error: "Only professional members can store a CV." };
   const file = formData.get("cv");
-  if (!(file instanceof File) || file.size === 0) return { error: "Choose a PDF or Word document." };
-  if (file.size > 5 * 1024 * 1024) return { error: "CVs must be 5 MB or smaller." };
-  if (!CV_TYPES.has(file.type)) return { error: "Upload a PDF or Word document." };
+  if (!(file instanceof File) || file.size === 0)
+    return { error: "Choose a PDF or Word document." };
+  if (file.size > 5 * 1024 * 1024)
+    return { error: "CVs must be 5 MB or smaller." };
+  if (!CV_TYPES.has(file.type))
+    return { error: "Upload a PDF or Word document." };
 
   const bytes = Buffer.from(await file.arrayBuffer());
   await sql`
@@ -227,22 +342,33 @@ export async function uploadCv(_prev: ActionState, formData: FormData): Promise<
       content = excluded.content,
       uploaded_at = now()
   `;
-  await writeAudit({ actorId: user.id, action: "cv.uploaded", entityType: "cv", entityId: user.id });
+  await writeAudit({
+    actorId: user.id,
+    action: "cv.uploaded",
+    entityType: "cv",
+    entityId: user.id,
+  });
   revalidatePath("/dashboard/profile");
   return { success: "CV stored in private storage." };
 }
 
-export async function registerForProgram(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function registerForProgram(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const user = await requireUser();
   const programId = String(formData.get("programId") ?? "");
-  const parsed = programRegistrationSchema.safeParse({ motivation: formData.get("motivation") });
+  const parsed = programRegistrationSchema.safeParse({
+    motivation: formData.get("motivation"),
+  });
   if (!parsed.success) return { error: "Check your registration." };
 
   const programs = await sql<{ id: string; title: string; status: string }[]>`
     select id, title, status from programs where id = ${programId} limit 1
   `;
   const program = programs[0];
-  if (!program || program.status !== "published") return { error: "This program is not open." };
+  if (!program || program.status !== "published")
+    return { error: "This program is not open." };
 
   try {
     await sql`
@@ -267,10 +393,70 @@ export async function registerForProgram(_prev: ActionState, formData: FormData)
   );
   revalidatePath("/dashboard/submissions");
   revalidatePath(`/programs/${programId}`);
-  return { success: "Registration received. You can follow it under Submissions." };
+  return {
+    success: "Registration received. You can follow it under Submissions.",
+  };
 }
 
-export async function updatePreferences(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function updateProgramRegistration(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const user = await requireUser();
+  const registrationId = String(formData.get("registrationId") ?? "");
+  const parsed = programRegistrationSchema.safeParse({
+    motivation: formData.get("motivation"),
+  });
+  if (!parsed.success)
+    return {
+      error: parsed.error.issues[0]?.message ?? "Check the registration.",
+    };
+
+  const updated = await sql<{ id: string }[]>`
+    update program_registrations
+    set motivation = ${emptyToNull(parsed.data.motivation)}, updated_at = now()
+    where id = ${registrationId} and profile_id = ${user.id}
+    returning id
+  `;
+  if (!updated.length)
+    return { error: "You can only edit your own registrations." };
+  await writeAudit({
+    actorId: user.id,
+    action: "registration.updated",
+    entityType: "program_registration",
+    entityId: registrationId,
+  });
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/submissions");
+  revalidatePath("/dashboard/learning");
+  redirect("/dashboard/submissions");
+}
+
+export async function deleteProgramRegistration(formData: FormData) {
+  const user = await requireUser();
+  const registrationId = String(formData.get("registrationId") ?? "");
+  const deleted = await sql<{ id: string }[]>`
+    delete from program_registrations
+    where id = ${registrationId} and profile_id = ${user.id}
+    returning id
+  `;
+  if (!deleted.length) redirect("/dashboard/submissions");
+  await writeAudit({
+    actorId: user.id,
+    action: "registration.deleted",
+    entityType: "program_registration",
+    entityId: deleted[0].id,
+  });
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/submissions");
+  revalidatePath("/dashboard/learning");
+  redirect("/dashboard/submissions");
+}
+
+export async function updatePreferences(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const user = await requireUser();
   const parsed = preferencesSchema.safeParse({
     newsletter: formData.get("newsletter") === "on",
@@ -292,15 +478,20 @@ export async function updatePreferences(_prev: ActionState, formData: FormData):
   return { success: "Communication preferences saved." };
 }
 
-export async function submitFeedback(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  if (String(formData.get("company_website") ?? "").trim()) return { success: "Thank you. Your message has been received." };
+export async function submitFeedback(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  if (String(formData.get("company_website") ?? "").trim())
+    return { success: "Thank you. Your message has been received." };
   const parsed = feedbackSchema.safeParse({
     fullName: formData.get("fullName"),
     email: formData.get("email"),
     topic: formData.get("topic"),
     message: formData.get("message"),
   });
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the form." };
+  if (!parsed.success)
+    return { error: parsed.error.issues[0]?.message ?? "Check the form." };
   await sql`
     insert into feedback (full_name, email, topic, message)
     values (${parsed.data.fullName}, ${parsed.data.email.toLowerCase()}, ${parsed.data.topic}, ${parsed.data.message})
@@ -313,10 +504,17 @@ export async function submitFeedback(_prev: ActionState, formData: FormData): Pr
   return { success: "Thank you. Your message has been received." };
 }
 
-export async function subscribeNewsletter(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  if (String(formData.get("company_website") ?? "").trim()) return { success: "You are on the list." };
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Enter a valid email address." };
+export async function subscribeNewsletter(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  if (String(formData.get("company_website") ?? "").trim())
+    return { success: "You are on the list." };
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return { error: "Enter a valid email address." };
   await sql`
     insert into newsletter_signups (email, source)
     values (${email}, 'footer')

@@ -2,6 +2,8 @@ node_modules
 package-lock.json
 .next
 out
+public/uploads/programs/*
+!public/uploads/programs/.gitkeep
 dist
 .vercel
 *.log

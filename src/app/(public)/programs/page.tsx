@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PhotoShape } from "@/components/home/PhotoShape";
 import { publishedPrograms } from "@/lib/queries";
 import { formatDate } from "@/lib/format";
 
@@ -17,7 +18,8 @@ export default async function ProgramsPage() {
           </h1>
           <p className="lede" style={{ color: "#d5dbe6", marginTop: "1rem" }}>
             The catalogue introduces market education, capital, supply chains and workforce readiness. Dates,
-            trainers and delivery format are confirmed per cohort. This is not an online classroom.
+            trainers and delivery format are confirmed per cohort. Confirmed participants on a learning membership
+            can take the lessons, sit the check, and receive a certificate.
           </p>
         </div>
       </section>
@@ -28,9 +30,19 @@ export default async function ProgramsPage() {
               key={program.id}
               href={`/programs/${program.slug}`}
               className="card"
-              style={{ textDecoration: "none", display: "grid", gridTemplateColumns: "4rem 1fr", gap: "1rem" }}
+              style={{
+                textDecoration: "none",
+                display: "grid",
+                gridTemplateColumns: program.imageUrl ? "9rem 1fr" : "4rem 1fr",
+                gap: "1rem",
+                alignItems: "center",
+              }}
             >
-              <span className="eyebrow">0{index + 1}</span>
+              {program.imageUrl ? (
+                <PhotoShape shape="squircle" src={program.imageUrl} alt={program.imageAlt || program.title} />
+              ) : (
+                <span className="eyebrow">0{index + 1}</span>
+              )}
               <span>
                 <h2>{program.title}</h2>
                 <p className="muted" style={{ marginTop: "0.45rem" }}>{program.summary}</p>

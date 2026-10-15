@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { saveInsight, saveProgram } from "@/features/admin/actions";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 
@@ -19,15 +19,138 @@ export function ProgramForm({
     status: string;
     startsOn: string | null;
     sortOrder: number;
+    imageUrl: string | null;
+    imageAlt: string | null;
   };
 }) {
   const [state, action] = useActionState(saveProgram, null);
+  const [preview, setPreview] = useState(program?.imageUrl ?? "");
+  const [fileName, setFileName] = useState("");
+  const [remove, setRemove] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const shown = remove ? "" : preview;
+
+  function assignFile(file: File | undefined) {
+    if (!file) return;
+    const transfer = new DataTransfer();
+    transfer.items.add(file);
+    if (fileRef.current) fileRef.current.files = transfer.files;
+    setRemove(false);
+    setFileName(file.name);
+    setPreview((current) => {
+      if (current.startsWith("blob:")) URL.revokeObjectURL(current);
+      return URL.createObjectURL(file);
+    });
+  }
+
+  function clearPick() {
+    if (fileRef.current) fileRef.current.value = "";
+    setFileName("");
+    setPreview((current) => {
+      if (current.startsWith("blob:")) URL.revokeObjectURL(current);
+      return "";
+    });
+  }
+
+  function restoreSaved() {
+    if (fileRef.current) fileRef.current.value = "";
+    setFileName("");
+    setRemove(false);
+    setPreview((current) => {
+      if (current.startsWith("blob:")) URL.revokeObjectURL(current);
+      return program?.imageUrl ?? "";
+    });
+  }
+
+  useEffect(() => {
+    if (state?.success) setRemove(false);
+  }, [state]);
   return (
     <form action={action} className="form-grid card admin-editor">
       <h2>{program ? "Edit programme" : "New programme"}</h2>
       {program && <input type="hidden" name="id" value={program.id} />}
       <label className="field"><span>Title</span><input name="title" required defaultValue={program?.title} /></label>
       <label className="field"><span>Slug</span><input name="slug" required defaultValue={program?.slug} /></label>
+      <div className="photo-pick">
+        <div className="photo-pick-head">
+          <span>Photograph</span>
+          <em>Optional</em>
+        </div>
+        <div
+          className={`photo-pick-frame${shown ? " has-image" : ""}${dragOver ? " is-over" : ""}`}
+          onDragOver={(event) => {
+            event.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(event) => {
+            event.preventDefault();
+            setDragOver(false);
+            assignFile(event.dataTransfer.files[0]);
+          }}
+        >
+          {program?.imageUrl && (
+            <input
+              className="photo-pick-input"
+              type="checkbox"
+              name="removeImage"
+              checked={remove}
+              onChange={(event) => setRemove(event.target.checked)}
+            />
+          )}
+          <input
+            ref={fileRef}
+            className="photo-pick-input"
+            name="image"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={(event) => assignFile(event.target.files?.[0])}
+          />
+          {shown ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={shown} alt={program?.imageAlt || ""} />
+          ) : (
+            <div className="photo-pick-empty">
+              <button type="button" onClick={() => fileRef.current?.click()}>
+                <span className="photo-pick-mark" aria-hidden />
+                <strong>{remove ? "Photograph will be removed" : "Add a photograph"}</strong>
+                <span>{remove ? "Save to confirm, or choose another." : "Drop it here, or choose a file"}</span>
+              </button>
+              {remove && program?.imageUrl && (
+                <button type="button" className="photo-pick-undo" onClick={restoreSaved}>
+                  Keep the current photograph
+                </button>
+              )}
+            </div>
+          )}
+          {shown && (
+            <div className="photo-pick-bar">
+              <button type="button" onClick={() => fileRef.current?.click()}>Replace</button>
+              {program?.imageUrl && preview.startsWith("blob:") ? (
+                <button type="button" onClick={restoreSaved}>Undo</button>
+              ) : program?.imageUrl ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearPick();
+                    setRemove(true);
+                  }}
+                >
+                  Remove
+                </button>
+              ) : (
+                <button type="button" onClick={clearPick}>Clear</button>
+              )}
+            </div>
+          )}
+        </div>
+        <p className="photo-pick-note">{fileName || "JPG, PNG, WEBP or GIF, up to 4 MB. It appears on the home page, the catalogue, and this programme."}</p>
+        <label className="field">
+          <span>Caption</span>
+          <input name="imageAlt" defaultValue={program?.imageAlt ?? ""} placeholder="What the photograph shows" />
+        </label>
+      </div>
       <label className="field"><span>Summary</span><textarea name="summary" required defaultValue={program?.summary} /></label>
       <label className="field"><span>Description</span><textarea name="description" required defaultValue={program?.description} /></label>
       <div className="form-row">

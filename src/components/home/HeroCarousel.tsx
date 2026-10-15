@@ -6,16 +6,16 @@ import styles from "./HeroCarousel.module.scss";
 
 const SLIDES = [
   {
-    src: "/hero/search.jpg",
-    alt: "Two professionals reviewing a printed shortlist during an executive search briefing",
+    src: "/hero/landing-10.jpg",
+    alt: "African colleagues sharing ideas around a boardroom table",
   },
   {
-    src: "/hero/counsel.jpg",
-    alt: "A consultant holding a candidate brief with two colleagues in a senior hiring conversation",
+    src: "/hero/landing-09.jpg",
+    alt: "African professionals taking part in a business meeting",
   },
   {
-    src: "/hero/arrival.jpg",
-    alt: "An African professional arriving at a London office for a senior appointment",
+    src: "/hero/landing-03.jpg",
+    alt: "Women colleagues working together in an office meeting",
   },
 ];
 
@@ -51,7 +51,11 @@ export function HeroCarousel() {
           />
         ))}
       </div>
-      <div className={styles.dots} role="tablist" aria-label="Featured photographs">
+      <div
+        className={styles.dots}
+        role="tablist"
+        aria-label="Featured photographs"
+      >
         {SLIDES.map((slide, slideIndex) => (
           <button
             key={slide.src}

@@ -25,6 +25,15 @@ export function formatDate(value: string | Date | null | undefined) {
   }).format(new Date(value));
 }
 
+export function formatNaira(kobo: number | null | undefined) {
+  const value = (kobo ?? 0) / 100;
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
 export function formatDateTime(value: string | Date | null | undefined) {
   if (!value) return "—";
   return new Intl.DateTimeFormat("en-GB", {

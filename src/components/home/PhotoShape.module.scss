@@ -1,0 +1,80 @@
+@use "../../styles/variables" as *;
+
+.frame {
+  position: relative;
+  overflow: hidden;
+  background: #d9d3c8;
+  box-shadow: 0 16px 36px rgba(25, 38, 61, 0.14);
+}
+
+.img {
+  object-fit: cover;
+  transform: scale(1.04);
+  transition: transform 8s $ease;
+}
+
+.frame:hover .img {
+  transform: scale(1.1);
+}
+
+.circle {
+  border-radius: 50%;
+  aspect-ratio: 1;
+}
+
+.arch {
+  border-radius: 999px 999px 1.4rem 1.4rem;
+  aspect-ratio: 4 / 5;
+}
+
+.portrait {
+  border-radius: 1.6rem 1.6rem 5rem 1.6rem;
+  aspect-ratio: 3 / 4;
+}
+
+.leaf {
+  border-radius: 2rem 7rem 2rem 7rem;
+  aspect-ratio: 4 / 5;
+}
+
+.squircle {
+  border-radius: 2.4rem;
+  aspect-ratio: 5 / 4;
+}
+
+.blob {
+  aspect-ratio: 1;
+  border-radius: 58% 42% 62% 38% / 42% 58% 42% 58%;
+  animation: morph 14s ease-in-out infinite;
+}
+
+.float {
+  animation: floaty 7.5s ease-in-out infinite;
+}
+
+.floatLate {
+  animation: floaty 9s ease-in-out infinite;
+  animation-delay: -2.4s;
+}
+
+@keyframes floaty {
+  0%,
+  100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes morph {
+  0%,
+  100% { border-radius: 58% 42% 62% 38% / 42% 58% 42% 58%; }
+  50% { border-radius: 42% 58% 38% 62% / 58% 40% 60% 42%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .img,
+  .blob,
+  .float,
+  .floatLate {
+    animation: none;
+    transition: none;
+  }
+}

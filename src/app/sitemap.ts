@@ -3,7 +3,7 @@ import { publishedInsights, publishedPrograms } from "@/lib/queries";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const staticRoutes = ["", "/about", "/services", "/industries", "/employers", "/professionals", "/programs", "/insights", "/contact", "/privacy"].map(
+  const staticRoutes = ["", "/about", "/services", "/industries", "/employers", "/professionals", "/programs", "/jobs", "/membership", "/insights", "/contact", "/privacy"].map(
     (path) => ({ url: `${base}${path}`, changeFrequency: "weekly" as const, priority: path === "" ? 1 : 0.7 }),
   );
   const [programs, insights] = await Promise.all([publishedPrograms(), publishedInsights()]);

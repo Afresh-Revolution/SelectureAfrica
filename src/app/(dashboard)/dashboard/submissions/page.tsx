@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SubmissionActions } from "@/components/dashboard/SubmissionActions";
+import { deleteProgramRegistration } from "@/features/membership/actions";
 import { requireUser } from "@/lib/auth";
 import { REGISTRATION_LABELS } from "@/lib/constants";
 import { sql } from "@/lib/db";
@@ -7,7 +9,15 @@ import type { RegistrationStatus } from "@/types";
 
 export default async function SubmissionsPage() {
   const user = await requireUser();
-  const rows = await sql<{ id: string; title: string; slug: string; status: RegistrationStatus; createdAt: string }[]>`
+  const rows = await sql<
+    {
+      id: string;
+      title: string;
+      slug: string;
+      status: RegistrationStatus;
+      createdAt: string;
+    }[]
+  >`
     select r.id, p.title, p.slug, r.status, r.created_at
     from program_registrations r
     join programs p on p.id = r.program_id
@@ -17,23 +27,46 @@ export default async function SubmissionsPage() {
   return (
     <div>
       <p className="eyebrow">Submissions</p>
-      <h1 style={{ fontSize: "2.6rem", marginBottom: "1rem" }}>Programme registrations</h1>
+      <h1 style={{ fontSize: "2.6rem", marginBottom: "1rem" }}>
+        Programme registrations
+      </h1>
       {rows.length === 0 ? (
         <div className="empty">
-          Nothing registered yet. <Link href="/programs">Browse the catalogue</Link>
+          Nothing registered yet.{" "}
+          <Link href="/programs">Browse the catalogue</Link>
         </div>
       ) : (
         <div className="table-wrap">
           <table className="data">
             <thead>
-              <tr><th>Programme</th><th>Status</th><th>Registered</th></tr>
+              <tr>
+                <th>Programme</th>
+                <th>Status</th>
+                <th>Registered</th>
+                <th>Actions</th>
+              </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
                 <tr key={row.id}>
-                  <td><Link href={`/programs/${row.slug}`}>{row.title}</Link></td>
-                  <td><span className={`badge badge-${row.status}`}>{REGISTRATION_LABELS[row.status]}</span></td>
+                  <td>
+                    <Link href={`/programs/${row.slug}`}>{row.title}</Link>
+                  </td>
+                  <td>
+                    <span className={`badge badge-${row.status}`}>
+                      {REGISTRATION_LABELS[row.status]}
+                    </span>
+                  </td>
                   <td>{formatDate(row.createdAt)}</td>
+                  <td>
+                    <SubmissionActions
+                      recordId={row.id}
+                      idField="registrationId"
+                      editHref={`/dashboard/submissions/${row.id}/edit`}
+                      deleteAction={deleteProgramRegistration}
+                      itemLabel="programme registration"
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>

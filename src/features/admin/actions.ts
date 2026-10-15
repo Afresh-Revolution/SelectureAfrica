@@ -5,6 +5,7 @@ import { hashPassword, requireStaff, requireSuperAdmin } from "@/lib/auth";
 import { writeAudit } from "@/lib/audit";
 import { sendMail } from "@/lib/email";
 import { sql } from "@/lib/db";
+import { removeStoredImage, storePublicImage } from "@/lib/images";
 import { emptyToNull, insightSchema, programSchema, registrationUpdateSchema, requestUpdateSchema, adminMemberSchema } from "@/lib/validators";
 import type { ActionState } from "@/features/auth/actions";
 
@@ -120,44 +121,81 @@ export async function saveProgram(_prev: ActionState, formData: FormData): Promi
     status: formData.get("status"),
     startsOn: formData.get("startsOn"),
     sortOrder: formData.get("sortOrder") || "0",
+    imageAlt: formData.get("imageAlt"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the program." };
   const id = String(formData.get("id") ?? "");
   const starts = parsed.data.startsOn ? parsed.data.startsOn : null;
+  const imageAlt = emptyToNull(parsed.data.imageAlt);
+  const uploaded = await storePublicImage(formData.get("image"));
+  if (uploaded && "error" in uploaded) return { error: uploaded.error };
+  const removeImage = formData.get("removeImage") === "on";
+  if (removeImage && uploaded?.url) await removeStoredImage(uploaded.url);
+  const nextImage = removeImage ? null : (uploaded?.url ?? undefined);
 
-  if (id) {
-    await sql`
-      update programs set
-        title = ${parsed.data.title},
-        slug = ${parsed.data.slug},
-        summary = ${parsed.data.summary},
-        description = ${parsed.data.description},
-        duration = ${emptyToNull(parsed.data.duration)},
-        format = ${emptyToNull(parsed.data.format)},
-        audience = ${emptyToNull(parsed.data.audience)},
-        status = ${parsed.data.status},
-        starts_on = ${starts},
-        sort_order = ${parsed.data.sortOrder},
-        updated_at = now()
-      where id = ${id}
-    `;
-  } else {
-    await sql`
-      insert into programs (title, slug, summary, description, duration, format, audience, status, starts_on, sort_order)
-      values (
-        ${parsed.data.title},
-        ${parsed.data.slug},
-        ${parsed.data.summary},
-        ${parsed.data.description},
-        ${emptyToNull(parsed.data.duration)},
-        ${emptyToNull(parsed.data.format)},
-        ${emptyToNull(parsed.data.audience)},
-        ${parsed.data.status},
-        ${starts},
-        ${parsed.data.sortOrder}
-      )
-    `;
+  const existing = id
+    ? (
+        await sql<{ imageUrl: string | null; slug: string }[]>`
+          select image_url, slug from programs where id = ${id} limit 1
+        `
+      )[0]
+    : undefined;
+  if (id && !existing) {
+    if (uploaded?.url) await removeStoredImage(uploaded.url);
+    return { error: "Programme not found." };
   }
+
+  const imageUrl = nextImage === undefined ? (existing?.imageUrl ?? null) : nextImage;
+
+  try {
+    if (id) {
+      await sql`
+        update programs set
+          title = ${parsed.data.title},
+          slug = ${parsed.data.slug},
+          summary = ${parsed.data.summary},
+          description = ${parsed.data.description},
+          duration = ${emptyToNull(parsed.data.duration)},
+          format = ${emptyToNull(parsed.data.format)},
+          audience = ${emptyToNull(parsed.data.audience)},
+          status = ${parsed.data.status},
+          starts_on = ${starts},
+          sort_order = ${parsed.data.sortOrder},
+          image_url = ${imageUrl},
+          image_alt = ${imageAlt},
+          updated_at = now()
+        where id = ${id}
+      `;
+    } else {
+      await sql`
+        insert into programs (
+          title, slug, summary, description, duration, format, audience, status, starts_on, sort_order, image_url, image_alt
+        )
+        values (
+          ${parsed.data.title},
+          ${parsed.data.slug},
+          ${parsed.data.summary},
+          ${parsed.data.description},
+          ${emptyToNull(parsed.data.duration)},
+          ${emptyToNull(parsed.data.format)},
+          ${emptyToNull(parsed.data.audience)},
+          ${parsed.data.status},
+          ${starts},
+          ${parsed.data.sortOrder},
+          ${imageUrl},
+          ${imageAlt}
+        )
+      `;
+    }
+  } catch (error) {
+    if (uploaded?.url) await removeStoredImage(uploaded.url);
+    const code = typeof error === "object" && error && "code" in error ? String(error.code) : "";
+    if (code === "23505") return { error: "That slug is already used." };
+    throw error;
+  }
+
+  if (existing?.imageUrl && existing.imageUrl !== imageUrl) await removeStoredImage(existing.imageUrl);
+
   await writeAudit({
     actorId: user.id,
     action: id ? "program.updated" : "program.created",
@@ -166,6 +204,9 @@ export async function saveProgram(_prev: ActionState, formData: FormData): Promi
   });
   revalidatePath("/admin/programs");
   revalidatePath("/programs");
+  revalidatePath("/");
+  if (existing?.slug) revalidatePath(`/programs/${existing.slug}`);
+  revalidatePath(`/programs/${parsed.data.slug}`);
   return { success: "Program saved." };
 }
 

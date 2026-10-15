@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 import { SITE } from "@/lib/constants";
 import { subscribeNewsletter } from "@/features/membership/actions";
 import styles from "./SiteFooter.module.scss";
@@ -14,12 +16,18 @@ export function SiteFooter() {
       <div className={`container ${styles.grid}`}>
         <div>
           <div className={styles.lockup}>
-            <img className={styles.mark} src="/brand/logo.png" alt="" width={56} height={62} />
+            <Image
+              className={styles.mark}
+              src="/brand/logo.png"
+              alt=""
+              width={56}
+              height={62}
+            />
             <div className={styles.brand}>Selecture Africa</div>
           </div>
           <p className={styles.muted}>
-            An Africa-focused talent solutions firm. Recruitment, outsourcing and professional preparation,
-            delivered from Lagos and London.
+            An Africa-focused talent solutions firm. Recruitment, outsourcing
+            and professional preparation, delivered from Lagos and London.
           </p>
         </div>
         <div className={styles.col}>
@@ -28,15 +36,23 @@ export function SiteFooter() {
           <Link href="/employers">For employers</Link>
           <Link href="/professionals">For professionals</Link>
           <Link href="/programs">Programs</Link>
+          <Link href="/jobs">Jobs</Link>
+          <Link href="/membership">Membership</Link>
           <Link href="/insights">Insights</Link>
         </div>
         <div className={styles.col}>
-          <h2>Lagos</h2>
+          <h2 className="with-flag">
+            <CountryFlag country="ng" />
+            Lagos
+          </h2>
           {SITE.lagos.lines.map((line) => (
             <span key={line}>{line}</span>
           ))}
           <a href={SITE.lagos.phoneHref}>{SITE.lagos.phone}</a>
-          <h2 style={{ marginTop: "1rem" }}>London</h2>
+          <h2 className={`with-flag ${styles.later}`}>
+            <CountryFlag country="gb" />
+            London
+          </h2>
           {SITE.london.lines.map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -44,7 +60,9 @@ export function SiteFooter() {
         </div>
         <div>
           <h2 className={styles.label}>Briefing list</h2>
-          <p className={styles.muted}>Occasional notes on talent markets. No noise.</p>
+          <p className={styles.muted}>
+            Occasional notes on talent markets. No noise.
+          </p>
           <form className={styles.form} action={action}>
             <label className="honeypot" aria-hidden>
               Website
@@ -53,7 +71,13 @@ export function SiteFooter() {
             <label className="sr-only" htmlFor="footer-email">
               Email
             </label>
-            <input id="footer-email" name="email" type="email" required placeholder="Work email" />
+            <input
+              id="footer-email"
+              name="email"
+              type="email"
+              required
+              placeholder="Work email"
+            />
             <button className="btn btn-gold" disabled={pending} type="submit">
               {pending ? "Joining" : "Join"}
             </button>

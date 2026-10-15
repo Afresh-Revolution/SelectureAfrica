@@ -14,7 +14,7 @@ export default function ProfessionalsPage() {
           </h1>
           <p className="lede" style={{ color: "#d5dbe6", marginTop: "1rem" }}>
             Individual membership is for African professionals, diaspora talent and people preparing for a programme.
-            It is a relationship with the firm, not an open marketplace.
+            You can be matched to published roles and apply when you choose. The CV stays private until you do.
           </p>
           <Link className="btn btn-primary" href="/register/professional" style={{ marginTop: "1.4rem" }}>
             Create a professional account

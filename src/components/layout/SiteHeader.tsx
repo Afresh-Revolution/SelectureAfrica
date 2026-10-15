@@ -13,7 +13,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
 
   return (
     <header className={styles.header}>
-      <div className={`container ${styles.bar}`}>
+      <div className={styles.bar}>
         <Link href="/" className={styles.brand} onClick={() => setOpen(false)}>
           <Image className={styles.mark} src="/brand/logo.png" alt="" width={72} height={80} priority />
           <span className={styles.word}>

@@ -119,6 +119,21 @@ p {
   flex: 0 0 auto;
 }
 
+.with-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.flag {
+  width: 1.35rem;
+  height: 0.68rem;
+  display: block;
+  flex: none;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.28);
+}
+
 .lede {
   font-size: 1.15rem;
   color: $muted;
@@ -144,9 +159,15 @@ p {
   gap: 1.25rem;
 }
 
-.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 
 .card {
   background: $paper;
@@ -154,7 +175,10 @@ p {
   border-radius: 1.25rem;
   padding: 1.5rem;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
-  transition: transform 0.45s $ease, box-shadow 0.45s $ease, border-color 0.45s $ease;
+  transition:
+    transform 0.45s $ease,
+    box-shadow 0.45s $ease,
+    border-color 0.45s $ease;
 }
 
 .card:hover {
@@ -185,26 +209,42 @@ p {
   text-decoration: none;
   font-weight: 630;
   letter-spacing: -0.01em;
-  transition: transform 0.25s $ease, background 0.25s $ease, color 0.25s $ease, border-color 0.25s $ease;
+  transition:
+    transform 0.25s $ease,
+    background 0.25s $ease,
+    color 0.25s $ease,
+    border-color 0.25s $ease;
 }
 
-.btn:hover { transform: translateY(-1px); }
-.btn:active { transform: translateY(0) scale(0.985); }
-.btn:disabled { opacity: 0.65; cursor: progress; transform: none; }
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0) scale(0.985);
+}
+.btn:disabled {
+  opacity: 0.65;
+  cursor: progress;
+  transform: none;
+}
 
 .btn-primary {
   background: $burgundy;
   color: #fffaf6;
 }
 
-.btn-primary:hover { background: $burgundy-deep; }
+.btn-primary:hover {
+  background: $burgundy-deep;
+}
 
 .btn-navy {
   background: $navy;
   color: $ivory;
 }
 
-.btn-navy:hover { background: $navy-deep; }
+.btn-navy:hover {
+  background: $navy-deep;
+}
 
 .btn-ghost {
   background: transparent;
@@ -218,7 +258,77 @@ p {
   color: $navy;
 }
 
-.btn-line:hover { border-color: $navy; }
+.btn-line:hover {
+  border-color: $navy;
+}
+
+.btn-danger {
+  background: $danger;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #742626;
+}
+
+.confirm-dialog {
+  width: min(30rem, calc(100% - 2rem));
+  max-height: min(90vh, 34rem);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid rgba(25, 38, 61, 0.12);
+  border-radius: 0.9rem;
+  background: $paper;
+  color: $ink;
+  box-shadow: 0 24px 80px rgba(16, 25, 43, 0.28);
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(16, 25, 43, 0.58);
+  backdrop-filter: blur(3px);
+}
+
+.confirm-dialog-content {
+  padding: 1.6rem;
+}
+
+.confirm-dialog-content h2 {
+  margin: 0.45rem 0 0.6rem;
+  color: $navy;
+  font-size: 1.8rem;
+}
+
+.confirm-dialog-content > p:not(.eyebrow) {
+  color: $muted;
+  line-height: 1.55;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.5rem;
+}
+
+.confirm-dialog-actions .btn {
+  min-height: 2.8rem;
+}
+
+@media (max-width: 480px) {
+  .confirm-dialog-content {
+    padding: 1.25rem;
+  }
+
+  .confirm-dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .confirm-dialog-actions .btn {
+    width: 100%;
+  }
+}
 
 .btn-gold {
   background: $gold;
@@ -246,10 +356,20 @@ p {
   background: #fff;
   border-radius: 0.9rem;
   padding: 0.85rem 0.95rem;
-  transition: border-color 0.2s $ease, box-shadow 0.2s $ease;
+  transition:
+    border-color 0.2s $ease,
+    box-shadow 0.2s $ease;
 }
 
-.field textarea { min-height: 140px; resize: vertical; }
+.field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.field input[type="file"] {
+  padding: 0.7rem 0.85rem;
+  font-size: 0.92rem;
+}
 
 .field input:focus,
 .field select:focus,
@@ -267,7 +387,9 @@ p {
   font-size: 0.95rem;
 }
 
-.check input { margin-top: 0.3rem; }
+.check input {
+  margin-top: 0.3rem;
+}
 
 .form-grid {
   display: grid;
@@ -318,12 +440,88 @@ p {
   color: $navy;
 }
 
-.badge-submitted { background: #ece7df; }
-.badge-in_review, .badge-assigned { background: #f3ead8; color: #6d5428; }
-.badge-in_progress, .badge-awaiting_client { background: #e7eef8; color: #243652; }
-.badge-completed, .badge-confirmed { background: #e5f0ea; color: $forest; }
-.badge-closed, .badge-declined, .badge-withdrawn { background: #f3e4e4; color: $danger; }
-.badge-waitlisted { background: #f6efe2; color: #6a5430; }
+.badge-submitted {
+  background: #ece7df;
+}
+.badge-in_review,
+.badge-assigned {
+  background: #f3ead8;
+  color: #6d5428;
+}
+.badge-in_progress,
+.badge-awaiting_client {
+  background: #e7eef8;
+  color: #243652;
+}
+.badge-completed,
+.badge-confirmed {
+  background: #e5f0ea;
+  color: $forest;
+}
+.badge-closed,
+.badge-declined,
+.badge-withdrawn {
+  background: #f3e4e4;
+  color: $danger;
+}
+.badge-waitlisted {
+  background: #f6efe2;
+  color: #6a5430;
+}
+.badge-open,
+.badge-active,
+.badge-hired,
+.badge-confirmed {
+  background: #e5f0ea;
+  color: $forest;
+}
+.badge-draft,
+.badge-paused,
+.badge-pending {
+  background: #f6efe2;
+  color: #6a5430;
+}
+.badge-rejected,
+.badge-past_due {
+  background: #f3e4e4;
+  color: $danger;
+}
+.badge-screening,
+.badge-interview,
+.badge-assessment,
+.badge-offer,
+.badge-applied {
+  background: #e7eef8;
+  color: #243652;
+}
+
+.meter {
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #ece7df;
+  overflow: hidden;
+}
+
+.meter span {
+  display: block;
+  height: 100%;
+  background: $burgundy;
+}
+
+.video-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #141820;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.video-frame iframe,
+.video-frame video {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
 
 .table-wrap {
   overflow-x: auto;
@@ -355,8 +553,13 @@ table.data th {
   background: #fbfaf7;
 }
 
-table.data tr:last-child td { border-bottom: 0; }
-table.data a { color: $burgundy; font-weight: 650; }
+table.data tr:last-child td {
+  border-bottom: 0;
+}
+table.data a {
+  color: $burgundy;
+  font-weight: 650;
+}
 
 .page-enter {
   animation: pageIn 0.55s $ease;
@@ -365,13 +568,23 @@ table.data a { color: $burgundy; font-weight: 650; }
 }
 
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .hero-dark {
   background:
-    radial-gradient(900px 420px at 90% -10%, rgba(183, 150, 96, 0.22), transparent 60%),
+    radial-gradient(
+      900px 420px at 90% -10%,
+      rgba(183, 150, 96, 0.22),
+      transparent 60%
+    ),
     linear-gradient(165deg, $navy-deep, $navy 55%, #24344f);
   color: $ivory;
   position: relative;
@@ -393,7 +606,9 @@ table.data a { color: $burgundy; font-weight: 650; }
   color: $ink;
 }
 
-.prose p { color: $muted; }
+.prose p {
+  color: $muted;
+}
 
 .empty {
   padding: 2rem;
@@ -426,9 +641,16 @@ table.data a { color: $burgundy; font-weight: 650; }
     display: grid;
   }
 
-  .section { padding: 3.5rem 0; }
-  .section-head { align-items: flex-start; }
-  .container, .container-narrow { width: min(1180px, calc(100% - 1.5rem)); }
+  .section {
+    padding: 3.5rem 0;
+  }
+  .section-head {
+    align-items: flex-start;
+  }
+  .container,
+  .container-narrow {
+    width: min(1180px, calc(100% - 1.5rem));
+  }
 }
 
 @media (max-width: 700px) {
@@ -441,13 +663,22 @@ table.data a { color: $burgundy; font-weight: 650; }
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .section { padding: 2.75rem 0; }
-  .container, .container-narrow { width: min(1180px, calc(100% - 1.25rem)); }
-  .btn { max-width: 100%; }
+  .section {
+    padding: 2.75rem 0;
+  }
+  .container,
+  .container-narrow {
+    width: min(1180px, calc(100% - 1.25rem));
+  }
+  .btn {
+    max-width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
@@ -455,5 +686,7 @@ table.data a { color: $burgundy; font-weight: 650; }
     transition: none !important;
   }
   .card:hover,
-  .btn:hover { transform: none; }
+  .btn:hover {
+    transform: none;
+  }
 }

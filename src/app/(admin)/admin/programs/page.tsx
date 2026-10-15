@@ -17,8 +17,10 @@ export default async function ProgramsAdmin({ searchParams }: { searchParams: Pr
       status: string;
       startsOn: string | null;
       sortOrder: number;
+      imageUrl: string | null;
+      imageAlt: string | null;
     }[]
-  >`select id, title, slug, summary, description, duration, format, audience, status, starts_on, sort_order from programs order by sort_order, title`;
+  >`select id, title, slug, summary, description, duration, format, audience, status, starts_on, sort_order, image_url, image_alt from programs order by sort_order, title`;
   const current = programs.find((program) => program.id === edit);
   return (
     <div>

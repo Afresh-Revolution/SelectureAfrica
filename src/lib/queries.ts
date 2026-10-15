@@ -12,9 +12,11 @@ export async function publishedPrograms() {
       format: string | null;
       audience: string | null;
       startsOn: string | null;
+      imageUrl: string | null;
+      imageAlt: string | null;
     }[]
   >`
-    select id, slug, title, summary, description, duration, format, audience, starts_on
+    select id, slug, title, summary, description, duration, format, audience, starts_on, image_url, image_alt
     from programs
     where status = 'published'
     order by sort_order, title

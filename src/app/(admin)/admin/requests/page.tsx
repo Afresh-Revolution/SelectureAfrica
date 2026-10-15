@@ -33,19 +33,26 @@ export default async function AdminRequests({
 
   return (
     <div>
-      <h1 style={{ fontSize: "2.4rem", marginBottom: "0.8rem" }}>Service requests</h1>
-      <p style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", marginBottom: "1rem" }}>
-        <Link href="/admin/requests">All</Link>
+      <div className="admin-heading">
+        <h1>Service requests</h1>
+      </div>
+      <nav className="status-filters" aria-label="Filter by status">
+        <Link href="/admin/requests" aria-current={filter ? undefined : "page"}>All</Link>
         {Object.entries(STATUS_LABELS).map(([value, label]) => (
-          <Link key={value} href={`/admin/requests?status=${value}`}>{label}</Link>
+          <Link key={value} href={`/admin/requests?status=${value}`} aria-current={filter === value ? "page" : undefined}>
+            {label}
+          </Link>
         ))}
-      </p>
+      </nav>
       <div className="table-wrap">
         <table className="data">
           <thead>
             <tr><th>Reference</th><th>Organisation</th><th>Type</th><th>Title</th><th>Status</th><th>Received</th></tr>
           </thead>
           <tbody>
+            {rows.length === 0 && (
+              <tr><td colSpan={6}>No requests in this view.</td></tr>
+            )}
             {rows.map((row) => (
               <tr key={row.id}>
                 <td><Link href={`/admin/requests/${row.id}`}>{row.referenceCode}</Link></td>

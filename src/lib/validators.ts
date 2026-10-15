@@ -126,6 +126,7 @@ export const programSchema = z.object({
   status: z.enum(["draft", "published"]),
   startsOn: z.string().trim().optional().or(z.literal("")),
   sortOrder: z.coerce.number().int().min(0).max(99),
+  imageAlt: z.string().trim().max(180).optional().or(z.literal("")),
 });
 
 export const insightSchema = z.object({
@@ -169,6 +170,84 @@ export const requestUpdateSchema = z.object({
 export const registrationUpdateSchema = z.object({
   status: z.enum(["submitted", "confirmed", "waitlisted", "declined", "withdrawn"]),
 });
+
+const optionalText = z.string().trim().max(200).optional().or(z.literal(""));
+
+const blankToUndefined = (value: unknown) => (value === "" || value === null ? undefined : value);
+
+export const jobSchema = z.object({
+  title: z.string().trim().min(3).max(160),
+  summary: z.string().trim().min(10).max(300),
+  description: z.string().trim().min(20).max(8000),
+  city: optionalText,
+  country: optionalText,
+  employmentType: z.enum(["permanent", "contract", "outsourced"]),
+  seniority: optionalText,
+  skills: z.string().trim().max(400).optional().or(z.literal("")),
+  industries: z.string().trim().max(300).optional().or(z.literal("")),
+  minExperience: z.preprocess(blankToUndefined, z.coerce.number().int().min(0).max(60).optional()),
+  headcount: z.preprocess(blankToUndefined, z.coerce.number().int().min(1).max(5000).optional()),
+  salaryMin: z.preprocess(blankToUndefined, z.coerce.number().int().min(0).max(1000000000).optional()),
+  salaryMax: z.preprocess(blankToUndefined, z.coerce.number().int().min(0).max(1000000000).optional()),
+  diasporaPreferred: z.boolean(),
+  status: z.enum(["draft", "open", "paused", "closed"]),
+});
+
+export const applicationSchema = z.object({
+  jobId: z.string().uuid(),
+  coverNote: z.string().trim().max(2000).optional().or(z.literal("")),
+});
+
+export const applicationMoveSchema = z.object({
+  applicationId: z.string().uuid(),
+  status: z.enum(["applied", "screening", "interview", "assessment", "offer", "hired", "rejected", "withdrawn"]),
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
+});
+
+export const lessonSchema = z.object({
+  programId: z.string().uuid(),
+  title: z.string().trim().min(3).max(160),
+  summary: z.string().trim().max(300).optional().or(z.literal("")),
+  body: z.string().trim().min(10).max(12000),
+  videoUrl: z.string().trim().max(400).optional().or(z.literal("")),
+  durationMinutes: z.preprocess(blankToUndefined, z.coerce.number().int().min(1).max(600).optional()),
+  sortOrder: z.preprocess(blankToUndefined, z.coerce.number().int().min(0).max(99).optional()),
+});
+
+export const examQuestionSchema = z.object({
+  programId: z.string().uuid(),
+  prompt: z.string().trim().min(8).max(500),
+  options: z.string().trim().min(8).max(1000),
+  correctIndex: z.coerce.number().int().min(1).max(6),
+  passMark: z.preprocess(blankToUndefined, z.coerce.number().int().min(1).max(100).optional()),
+});
+
+export const workforceSchema = z.object({
+  fullName: z.string().trim().min(2).max(120),
+  email: z.union([z.literal(""), z.string().trim().email().max(180)]),
+  roleTitle: z.string().trim().min(2).max(120),
+  employmentType: z.enum(["permanent", "contract", "outsourced"]),
+  country: optionalText,
+  startDate: z.string().trim().optional().or(z.literal("")),
+  status: z.enum(["active", "on_leave", "offboarded"]),
+  monthlyGross: z.preprocess(blankToUndefined, z.coerce.number().min(0).max(100000000)),
+  bankName: optionalText,
+  accountLast4: z.string().trim().regex(/^$|^\d{4}$/, "Enter the last four digits, or leave this blank.").optional().or(z.literal("")),
+});
+
+export const payrollRunSchema = z.object({
+  periodLabel: z.string().trim().min(3).max(40),
+});
+
+export const partnerSchema = z.object({
+  provider: z.enum(["webhook", "slack", "hris"]),
+  label: z.string().trim().min(2).max(80),
+  endpointUrl: z.string().trim().max(400),
+});
+
+export function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
 
 export function splitList(value: string | undefined) {
   if (!value) return [];

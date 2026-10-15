@@ -88,7 +88,9 @@
 }
 
 .office span {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   color: $gold-soft;
   font-size: 0.75rem;
   letter-spacing: 0.12em;
@@ -124,8 +126,57 @@
 
 .split {
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
+  grid-template-columns: 0.9fr 1.1fr;
   gap: 3rem;
+  align-items: start;
+}
+
+.cluster {
+  position: relative;
+  height: 32rem;
+  margin-top: 1.6rem;
+}
+
+.cluster .clusterArch {
+  position: absolute;
+  width: 64%;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.cluster .clusterCircle {
+  position: absolute;
+  width: 46%;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+.cluster .clusterBlob {
+  position: absolute;
+  width: 40%;
+  left: 46%;
+  top: 1.2rem;
+  z-index: 3;
+}
+
+.places {
+  padding: 1rem 0 4.5rem;
+}
+
+.placeGrid {
+  display: grid;
+  grid-template-columns: 0.85fr 0.95fr 1.15fr 0.8fr;
+  gap: 1.1rem;
+  align-items: end;
+  margin-top: 1.4rem;
+}
+
+.searchGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem minmax(0, 1fr);
+  gap: 2rem;
   align-items: start;
 }
 
@@ -200,6 +251,12 @@
   color: $gold;
 }
 
+.course {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
 .article {
   text-decoration: none;
   display: flex;
@@ -251,7 +308,14 @@
 
 @media (max-width: 900px) {
   .hero { padding: 2.75rem 0 3rem; }
-  .heroGrid, .split, .routes, .offices { grid-template-columns: minmax(0, 1fr); }
+  .heroGrid, .split, .routes, .offices, .searchGrid { grid-template-columns: minmax(0, 1fr); }
+  .placeGrid { grid-template-columns: 1fr 1fr; align-items: stretch; }
+  .cluster { height: auto; display: grid; gap: 1rem; }
+  .cluster .clusterArch,
+  .cluster .clusterCircle,
+  .cluster .clusterBlob { position: relative; width: min(100%, 22rem); right: auto; left: auto; top: auto; bottom: auto; }
+  .clusterCircle { justify-self: end; }
+  .searchGrid > :nth-child(2) { max-width: 18rem; }
   .band, .bandAlt, .bandWarm, .bandPaper { padding: 3.25rem 0; }
   .briefWrap { margin-top: 2rem; }
   .route { min-height: 0; padding: 1.5rem; }
@@ -264,6 +328,7 @@
 }
 
 @media (max-width: 560px) {
+  .placeGrid { grid-template-columns: minmax(0, 1fr); }
   .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .chip,
   .chip:nth-child(n + 5) { grid-column: span 1; }

@@ -20,15 +20,16 @@ export default function EmployersPage() {
             Corporate membership is the front door.
           </h1>
           <p className="lede" style={{ color: "#d5dbe6", marginTop: "1rem" }}>
-            Selecture is instructed by organisations. Membership is how a company keeps its profile, its requests
-            and its correspondence in one place — without turning the firm into a self-serve job board.
+            Selecture is instructed by organisations. Membership keeps the profile, the requests and the
+            correspondence in one place. Retained search stays with a consultant. An employer plan can also
+            publish roles and follow applicants.
           </p>
           <div style={{ display: "flex", gap: "0.7rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
             <Link className="btn btn-primary" href="/register/corporate">
               Register your organisation
             </Link>
-            <Link className="btn btn-ghost" href="/contact">
-              Speak to the firm first
+            <Link className="btn btn-ghost" href="/jobs">
+              Open roles
             </Link>
           </div>
         </div>
@@ -47,10 +48,11 @@ export default function EmployersPage() {
             <h3>What stays with Selecture</h3>
             <p>
               Research, qualification, interviews and the decision to present a candidate remain consultant-led.
-              Employers receive updates and next steps. They do not browse a public pool of CVs.
+              Employers receive updates and next steps. A published role shows applicants who chose to apply.
+              Suggested matches stay anonymous until that person applies.
             </p>
             <p style={{ marginTop: "0.8rem" }}>
-              Candidate documents stay in private storage and are visible to the member who uploaded them and to Selecture staff.
+              Candidate documents stay in private storage. They are visible to the member who uploaded them, to Selecture staff, and to an employer only after that person applies.
             </p>
           </article>
         </div>

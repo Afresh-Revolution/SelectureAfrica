@@ -28,6 +28,8 @@ export const NAV = [
   { href: "/employers", label: "Employers" },
   { href: "/professionals", label: "Professionals" },
   { href: "/programs", label: "Programs" },
+  { href: "/jobs", label: "Jobs" },
+  { href: "/membership", label: "Membership" },
   { href: "/insights", label: "Insights" },
   { href: "/contact", label: "Contact" },
 ];
@@ -203,6 +205,30 @@ export const COUNTRIES = [
 ];
 
 export const COMPANY_SIZES = ["1–50", "51–200", "201–1,000", "1,001–5,000", "5,000+"];
+
+export const APPLICATION_STATUSES = [
+  "applied",
+  "screening",
+  "interview",
+  "assessment",
+  "offer",
+  "hired",
+  "rejected",
+  "withdrawn",
+] as const;
+
+export const APPLICATION_LABELS: Record<(typeof APPLICATION_STATUSES)[number], string> = {
+  applied: "Applied",
+  screening: "Screening",
+  interview: "Interview",
+  assessment: "Assessment",
+  offer: "Offer",
+  hired: "Hired",
+  rejected: "Rejected",
+  withdrawn: "Withdrawn",
+};
+
+export const JOB_STATUSES = ["draft", "open", "paused", "closed"] as const;
 
 export function isStaff(accountType: string) {
   return accountType === "admin" || accountType === "super_admin";

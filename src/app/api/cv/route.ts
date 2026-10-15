@@ -8,9 +8,20 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   const requested = url.searchParams.get("profile");
-  const profileId = requested && (user.accountType === "admin" || user.accountType === "super_admin") ? requested : user.id;
-  if (profileId !== user.id && user.accountType !== "admin" && user.accountType !== "super_admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const staff = user.accountType === "admin" || user.accountType === "super_admin";
+  const profileId = requested && staff ? requested : requested && user.accountType === "corporate" ? requested : user.id;
+  if (profileId !== user.id && !staff) {
+    if (!(user.accountType === "corporate" && user.organizationId)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    const allowed = await sql<{ ok: number }[]>`
+      select 1 as ok
+      from applications a
+      join jobs j on j.id = a.job_id
+      where a.profile_id = ${profileId} and j.organization_id = ${user.organizationId}
+      limit 1
+    `;
+    if (!allowed.length) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const rows = await sql<{ fileName: string; mimeType: string; content: Buffer }[]>`
